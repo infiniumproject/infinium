@@ -2,13 +2,11 @@
 // class: BrowserController
 // Manages the view for the window
 // --------------------------
-function BrowserController()
-{
+function BrowserController() {
 	
 }
 
-BrowserController.prototype.init = function()
-{
+BrowserController.prototype.init = function () {
 	// Render
 	this.render();
 	
@@ -17,13 +15,12 @@ BrowserController.prototype.init = function()
 	
 	// Create the window controller
 	this.window = new WindowController();
-    
-    // Create the app menu controller
-    this.appMenu = new AppMenuController();
+
+	// Create the app menu controller
+	this.appMenu = new AppMenuController();
 }
 
-BrowserController.prototype.render = function()
-{
-	$('head').append('<style>'+global.theme.css+'</style>');
+BrowserController.prototype.render = function () {
+	$("head").append("<style>" + global.theme.css + "</style>");
 	document.body.innerHTML = global.theme.browser(this);
 }

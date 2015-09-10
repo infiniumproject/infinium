@@ -1,9 +1,9 @@
 // --------------------------
 // Imports
 // --------------------------
-var path = require('path'),
-	fs = require('fs'),
-	less = require('less');
+var path = require("path"),
+	fs = require("fs"),
+	less = require("less");
 
 // --------------------------
 // Global variables
@@ -16,42 +16,40 @@ global.theme.name = "base";
 // This class handles loading themes (and template caching) before initializing the controllers
 // --------------------------
 
-function Themes()
-{
+function Themes () {
 	
 }
 
 // todo: this class needs to be an eventemitter and theme ready from that should start the callback
 
-Themes.prototype.loadTheme = function(theme)
-{
-	var dir = path.join(__dirname, '..', 'themes', global.theme.name);
+Themes.prototype.loadTheme = function (theme) {
+	var dir = path.join(__dirname, "..", "themes", global.theme.name);
 	
 	// Precompile / cache all templates
-	var templateDir = path.join(dir, 'templates');
+	var templateDir = path.join(dir, "templates");
 	var files = fs.readdirSync(templateDir);
 	
-	for (var i=0;i<files.length;i++)
-	{
+	for (var i=0; i<files.length; i++) {
 		var f = files[i];
-		global.theme[path.basename(f, '.hbs')] = Handlebars.compile(fs.readFileSync(path.join(templateDir, f)).toString());
+		global.theme[path.basename(f, ".hbs")] = Handlebars.compile(fs.readFileSync(path.join(templateDir, f)).toString());
 	}
 	
 	// Load all CSS files
-	var css = less.render(fs.readFileSync(path.join(dir, 'styles', 'theme.less')).toString(), {
-		paths: [path.join(dir, 'styles')],
-		filename: 'theme.less'
+	var themeFile = fs.readFileSync(path.join(dir, "styles", "theme.less")).toString();
+	var css = less.render(themeFile, {
+		paths: [path.join(dir, "styles")],
+		filename: "theme.less"
 	},
-	function(e, css)
-	{
-		if (e)
+	function(e, css) {
+		if (e) {
 			console.dir(e);
+		}
+
+		global.theme.css = css.css;
 		
-	//	console.log('Output CSS: '+css);
-		global.theme.css = css;
-		
-		if (this.cb)
+		if (this.cb) {
 			this.cb(this);
+		}
 	}.bind(this));
 	
 	global.less = less;

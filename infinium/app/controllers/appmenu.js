@@ -1,63 +1,73 @@
-var remote = require('remote'),
-    BrowserWindow = remote.require('browser-window'); 
+var remote = require("remote"),
+	BrowserWindow = remote.require("browser-window"); 
 
 // --------------------------
 // class: BrowserController
 // Manages the view for the window
-// --------------------------
-function AppMenuController()
-{
+// -------------------------
+function AppMenuController () {
 	this.init();
 }
 
-AppMenuController.prototype.init = function()
-{
-	// Render
+AppMenuController.prototype.init = function () {
 	this.render();
+
+	$(".app-menu-cover").click(this.hideClickHandler);
+	$(".app-menu *").click(this.hideClickHandler);
 }
 
-// todo: mask/overlay invisible div to detect for close event
-AppMenuController.prototype.hideClickHandler = function()
-{
-    setTimeout(function(){
-        browser.appMenu.hide();
-    }, 1);
+AppMenuController.prototype.hideClickHandler = function () {
+	browser.appMenu.hide();
 }
 
-AppMenuController.prototype.hide = function()
-{
-    $('.app-menu').removeClass('show');
-    $('.app-menu-cover').removeClass('show');
+AppMenuController.prototype.hide = function() {
+	$(".app-menu").removeClass("show");
+	$(".app-menu-cover").removeClass("show");
 }
 
-AppMenuController.prototype.onShowBrowserDevtools = function()
-{
-    BrowserWindow.getFocusedWindow().openDevTools();
+AppMenuController.prototype.onToggleBrowserDevtools = function () {
+	var browserWindow = BrowserWindow.getFocusedWindow();
+	if (browserWindow.isDevToolsOpened()) {
+		BrowserWindow.getFocusedWindow().closeDevTools();
+	} else {
+		BrowserWindow.getFocusedWindow().openDevTools();
+	}
 }
 
-AppMenuController.prototype.onShowTabDevtools = function()
-{
-    browser.tabStrip.tabs.active.webview.openDevTools()
+AppMenuController.prototype.onToggleTabDevtools = function () {
+	console.log("Toggling tab devtools");
+	var activeTab = browser.tabStrip.tabs.active.webview;
+	if (activeTab.isDevToolsOpened()) {
+		activeTab.closeDevTools()
+	} else {
+		activeTab.openDevTools()
+	}
 }
 
-AppMenuController.prototype.show = function()
-{
-    $('.app-menu').addClass('show');
-    $('.app-menu-cover').addClass('show');
-    
-    if (!this.events_added)
-    {
-        this.events_added = true;
-        
-        //$("#tabstrip").click(this.hideClickHandler);
-        $(".app-menu-cover").click(this.hideClickHandler);
-        
-        $("#browser_devtools").click(this.onShowBrowserDevtools);
-        $("#tab_devtools").click(this.onShowTabDevtools);
-    }
+AppMenuController.prototype.onCloseBrowser = function () {
+	app.quit(); // temporary until we provide support for multiple windows
 }
 
-AppMenuController.prototype.render = function()
-{
+AppMenuController.prototype.onCloseAllTabs = function () {
+	// browser.tabStrip.tabs.closeAll();
+	console.log("ayy")
+}
+
+AppMenuController.prototype.show = function () {
+	$(".app-menu").addClass("show");
+	$(".app-menu-cover").addClass("show");
+
+
+	if (!this.events_added) {
+		this.events_added = true;
+
+		$("#browser_devtools").click(this.onToggleBrowserDevtools);
+		$("#tab_devtools").click(this.onToggleTabDevtools);
+		$("#close_all_tabs").click(this.onCloseAllTabs);
+		$("#close_browser").click(this.onCloseBrowser);
+	}
+}
+
+AppMenuController.prototype.render = function () {
 	$("#menu").html(global.theme.menu(this));
 }

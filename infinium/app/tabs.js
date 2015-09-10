@@ -1,200 +1,213 @@
-// --------------------------
-// Imports
-// --------------------------
-var events = require('events'),
-	_ = require('lodash'),
-    http = require('http'),
-    urll = require('url');
+/*
+	--------------------------
+	Imports
+	--------------------------
+*/
+var events = require("events"),
+	_ = require("lodash"),
+	https = require("https"),
+	http = require("http"),
+	ipc = require("ipc"),
+	userAgents = require("./modules/useragents"),
+	urll = require("url");
 
-// --------------------------
-// class: TabView
-// The backing model/controller for an individual tab. Manages the WebView and is used as state for the controller
-// --------------------------
+/* 
+	--------------------------
+	class: TabView
+	The backing model/controller for an individual tab. Manages the WebView and is used as state for the controller
+	--------------------------
+*/
 
-function TabView(p)
-{
+function TabView (p) {
 	this.parent = p;
 	this.tabstrip_el = null;
-    
-    this.has_favicon = false;
+
+	this.has_favicon = false;
 	
 	this.webview = null;
-	this.id = _.uniqueId('webframe_');
+	this.id = _.uniqueId("webframe_");
 }
 
 // see: https://github.com/atom/atom-shell/blob/master/docs/api/web-view-tag.md
-TabView.prototype.initView = function()
-{
+TabView.prototype.initView = function () {
 	// create the frame holder
-	this.frameHolder = document.createElement('div');
+	this.frameHolder = document.createElement("div");
 	this.frameHolder.id = this.id + "_frame";
 	this.frameHolder.classList.add("webframe");
 	
-	// whether or not the tab is enabled, usable or w.e. not to be confused with selected tab (parent.active)
+	// Create the webview and set options
+	this.webview = new WebView();
+	$(this.webview).attr("plugins", "on");
+	$(this.webview).attr("preload", "./modules/tabPreload.js");
+
+	var userAgent = userAgents[_.random(0, userAgents.length)];
+	$(this.webview).attr("useragent", userAgent);
+
+	// Custom browser events
+	this.webview.addEventListener("ipc-message", function (e) {
+		switch (e.channel) {
+		case "alert":
+			console.log("alert: " + e.args[0]);
+			alert(e.args[0]);
+			break;
+		}
+	});
+
+	// Add the webview to document
+	this.frameHolder.appendChild(this.webview);
+	$("#webframes").append(this.frameHolder);
+	
+	// Set some initial tab properties
 	this.active = true;
 	this.favicon = null;
-	
-	this.webview = new WebView();
-    $(this.webview).attr('plugins', 'on');
-    
-	this.frameHolder.appendChild(this.webview);
-	
+	this.ssl = null;
 	this.loadState = "loading";
 	
-	$('#webframes').append(this.frameHolder);
-	
-	// attach event handlers
-	
-	this.webview.addEventListener('crashed', function() {
-		// on tab closed
-		this.active = false;
+	// Event handler
+	this.webview.addEventListener("close", this.close.bind(this));
+
+	this.webview.addEventListener("crashed", function () {
 		this.loadState = "crashed";
-		this.update();
 	}.bind(this));
 	
-	this.webview.addEventListener('destroyed', function() {
-		this.active = false;
-		this.loadState = "destroyed";
-        console.log('destroyed tab webview');
-		this.update();
+	this.webview.addEventListener("destroyed", function () {
+		this.loadState = "crashed"; // I think...
+		console.log("The \"destroyed\" thing happened");
 	}.bind(this));
 	
-	this.webview.addEventListener('close', function() {
-		// on tab closed
-		// todo: unify parent closeTab function
-		this.active = false;
-		this.parent.emit(Tabs.EVENT_TAB_CLOSED, this);
+	this.webview.addEventListener("did-fail-load", function () {
+		console.log("The \"fail-load\" thing happened");
 	}.bind(this));
 	
-	this.webview.addEventListener('did-fail-load', function() {
-		// on tab closed
-	}.bind(this));
-	
-	this.webview.addEventListener('did-finish-load', function() {
+	this.webview.addEventListener("did-finish-load", function () {
 		this.loadState = "done";
-		this.update();
-	}.bind(this));
-	
-	this.webview.addEventListener('did-start-loading', function() {
-		// on tab closed
-		//console.dir(arguments);
 		this.getUrlParts();
 		this.update();
+	}.bind(this));
+	
+	this.webview.addEventListener("did-start-loading", function () {
 		this.loadState = "loading";
+		this.getUrlParts();
+		this.update();
 	}.bind(this));
 	
-	this.webview.addEventListener('did-stop-loading', function() {
+	this.webview.addEventListener("did-stop-loading", function () {
 		this.loadState = "done";
+		this.getUrlParts();
 		this.update();
 	}.bind(this));
 	
-	this.webview.addEventListener('did-get-redirect-request', function(e) {
-		this.url = e.newUrl;
-		this.update();
-	}.bind(this));
-	
-	this.webview.addEventListener('new-window', function(e) {
+	this.webview.addEventListener("new-window", function (e) {
 		// check for window-bombing here
 		this.parent.addTab(e.url);
 	}.bind(this));
-	
-	this.updateInterval = setInterval(this.updateTick.bind(this), 500);
+
+	this.webview.addEventListener("page-title-set", function (e) {
+		this.title = e.title;
+		this.update();
+	}.bind(this));
+
+	this.webview.addEventListener("page-favicon-updated", function (e) {
+		this.favicon_url = e.favicons[0];
+		this.updateFavicon();
+		this.update();
+	}.bind(this));
+
+	this.webview.addEventListener("did-get-response-details", function (e) {
+		// Stuff for SSL indicator
+		if (this.ssl == false) return;
+
+		var protocol = urll.parse(e.newUrl).protocol;
+		if (protocol == "https:") {
+			this.ssl = true;
+		} else {
+			this.ssl = false;
+		}
+
+		this.update();
+	}.bind(this));
+
+	this.webview.addEventListener("did-get-redirect-request", function (e) {
+		this.getUrlParts();
+		this.update();
+	}.bind(this));
 }
 
-TabView.prototype.getUrlParts = function()
-{
-	var url = this.webview.getUrl();
-    
-    this.url_parts = urll.parse(url);
-	
-	return this.url_parts;
-}
-
-TabView.prototype.updateTick = function()
-{
-	// todo: check if these were even actually updated first
+// Process and set URL
+TabView.prototype.getUrlParts = function () {
 	this.url = this.webview.getUrl();
-	this.title = this.webview.getTitle();
-	this.parts = this.getUrlParts();
-	this.favicon_url = 'http:' + "//" + this.url_parts.host + "/favicon.ico";
-    if (this.old_favicon_url != this.favicon_url)
-        this.updateFavicon();
-    
-	this.update();
+	this.url_parts = urll.parse(this.url);
 }
 
-TabView.prototype.updateFavicon = function()
-{
-    this.old_favicon_url = this.favicon_url;
-    
-    var favicon_data = [];
-    http.get(urll.parse(this.favicon_url), function(resp) {
-       // resp.setEncoding('binary');
-        resp.on('data', function(chunk) { favicon_data.push(chunk); });
-        resp.on('end', function() {
-             var buf = Buffer.concat(favicon_data);
-             console.dir(buf);
-             console.dir(favicon_data);
-             console.dir(this.favicon_url);
-             this.has_favicon = true;
-             this.favicon_data = "data:image/x-icon;base64," + buf.toString('base64');
-             this.parent.emit(Tabs.EVENT_TAB_FAVICON, this);
-        }.bind(this));
-    }.bind(this));
-    
+// Fetch and set favicon
+TabView.prototype.updateFavicon = function () {
+	this.old_favicon_url = this.favicon_url;
+
+	var favicon_data = [];
+	function respHandler (resp)  {
+		resp.on("data", function (chunk) { favicon_data.push(chunk); });
+		resp.on("end", function () {
+			var buf = Buffer.concat(favicon_data);
+			this.favicon_data = "data:image/x-icon;base64," + buf.toString("base64");
+			this.has_favicon = true;
+			this.parent.emit(Tabs.EVENT_TAB_FAVICON, this);
+		}.bind(this));
+	}
+
+	if (this.favicon_url.startsWith("https://")) {
+		https.get(urll.parse(this.favicon_url), respHandler.bind(this));
+	} else {
+		http.get(urll.parse(this.favicon_url), respHandler.bind(this));
+	}
 }
 
-TabView.prototype.update = function()
-{
+// Update tab on tabstrip
+TabView.prototype.update = function () {
 	this.parent.emit(Tabs.EVENT_TAB_STATE, this);
 }
 
-TabView.prototype.setUrl = function(url)
-{
-	if (!this.webview)
-	{
+// Set URL of tab
+TabView.prototype.setUrl = function (url) {
+	if (!this.webview) {
 		this.initView();
 	}
 	
+	this.ssl = null;
 	this.webview.src = url;
 }
 
-TabView.prototype.close = function()
-{
-    var i = this.parent.tabs.indexOf(this);
-    this.parent.tabs.splice(i, 1);
-    this.parent.emit(Tabs.EVENT_TAB_CLOSED, this);
-    
-    this.frameHolder.removeChild(this.webview);
-    delete this.webview;
-    
-    if (this.parent.lastActive)
-    {
-        //this.parent.lastActive.show();
-    }
-    
-    clearInterval(this.updateInterval);
+// Close tab
+TabView.prototype.close = function () {
+	var i = this.parent.tabs.indexOf(this);
+	this.parent.tabs.splice(i, 1);
+	this.parent.emit(Tabs.EVENT_TAB_CLOSED, this);
+
+	this.frameHolder.removeChild(this.webview);
+	delete this.webview;
+
+	console.log("---closed tab---");
 }
 
-TabView.prototype.show = function()
-{
-    this.parent.lastActive = this.parent.active == this ? this.parent.lastActive : this.parent.active;
+// Show tab
+TabView.prototype.show = function () {
+	this.parent.lastActive = (this == this.parent.active ? this.parent.lastActive : this.parent.active);
 	this.parent.active = this;
-	
-	$('.webframe').removeClass('visible');
-	this.frameHolder.classList.add('visible');
-    
-    this.parent.emit(Tabs.EVENT_TAB_ACTIVE, this);
+
+	$(".webframe").removeClass("visible");
+	this.frameHolder.classList.add("visible");
+
+	this.parent.emit(Tabs.EVENT_TAB_ACTIVE, this);
 }
 
-// --------------------------
-// class: Tabs
-// This class represents the backing model for a tabstrip, and manages tabs as they get created, deleted or swapped.
-// The TabStripController will use this for getting information about tab state.
-// --------------------------
+/*
+	--------------------------
+	class: Tabs
+	This class represents the backing model for a tabstrip, and manages tabs as they get created, deleted or swapped.
+	The TabStripController will use this for getting information about tab state.
+	--------------------------
+*/
 
-function Tabs()
-{
+function Tabs () {
 	// when the TabStripController is created, this object will hold a reference to it for callbacks
 	this.controller = null;
 	
@@ -205,9 +218,11 @@ function Tabs()
 // this object will have events
 Tabs.prototype.__proto__ = events.EventEmitter.prototype;
 
-// --------------------------
-// Events
-// --------------------------
+/*
+	--------------------------
+	Events
+	--------------------------
+*/
 
 Tabs.EVENT_TAB_ADDED = "TabAdded";
 Tabs.EVENT_TAB_CLOSED = "TabClosed";
@@ -215,18 +230,19 @@ Tabs.EVENT_TAB_STATE = "TabState";
 Tabs.EVENT_TAB_ACTIVE = "TabActive";
 Tabs.EVENT_TAB_FAVICON = "TabFavicon";
 
-// --------------------------
-// Class Methods
-// --------------------------
+/*
+	--------------------------
+	Class Methods
+	--------------------------
+*/
 
-Tabs.prototype.setController = function(controller)
-{
+// Set controller
+Tabs.prototype.setController = function (controller) {
 	this.controller = controller;
 }
 
 // Add a tab and display it immediately
-Tabs.prototype.addTab = function(url)
-{
+Tabs.prototype.addTab = function (url) {
 	var tab = new TabView(this);
 	tab.setUrl(url);
 	tab.show();
@@ -234,5 +250,14 @@ Tabs.prototype.addTab = function(url)
 	this.tabs.push(tab);
 	this.emit(Tabs.EVENT_TAB_ADDED, tab);
 	
-	return tab;
+	// return tab;
+}
+
+// Close all open tabs
+Tabs.prototype.closeAll = function () {
+	console.dir(this.tabs);
+	_.each(this.tabs, function (tab) {
+		console.log(tab);
+		tab.close();
+	});
 }
