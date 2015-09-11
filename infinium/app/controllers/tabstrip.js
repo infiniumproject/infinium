@@ -148,7 +148,11 @@ TabStripController.prototype.onTabAdded = function (tab) {
 	this.positionTab(tab, tab.parent.tabs.length - 1); // TODO: proper
 
 	$("#" + tab_id).click(function (e) {
-		tab.show();
+		console.dir(e.target);
+		if (e.target.parentElement.className != "close") {
+			console.log("spaghettios");
+			tab.show();
+		}
 	});
 
 	$("#" + tab_id + " .close").click(function () {
