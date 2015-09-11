@@ -8,7 +8,6 @@ var events = require("events"),
 	_ = require("lodash"),
 	https = require("https"),
 	http = require("http"),
-	ipc = require("ipc"),
 	userAgents = require("./modules/useragents"),
 	urll = require("url");
 
