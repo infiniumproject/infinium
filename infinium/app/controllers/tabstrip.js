@@ -130,7 +130,6 @@ TabStripController.prototype.positionTab = function (tab, idx) {
 }
 
 // Tab Events
-
 TabStripController.prototype.onTabAdded = function (tab) {
 	var tab_id = _.uniqueId("tab_");
 	
@@ -197,40 +196,40 @@ TabStripController.prototype.onTabState = function (tab) {
 	var el = tab.tabstrip_el;
 	el.find(".title").text(tab.title);
 
-	if (this.tabs.active == tab) {
-		if (tab.ssl == true) {
-			this.ssl.css("color", "#6abf40");
-		} else {
-			this.ssl.css("color", "#f7f7f7");
-		}
+	if (this.tabs.active != tab) return;
 
-		if (tab.url_parts) {
-			$(".box .host").text(tab.url_parts.host);
-			$(".box .path").text(tab.url_parts.path);
-			$(".box .hash").text(tab.url_parts.hash);
-
-			if (this.input_blurred) $(".box input").val(tab.url);
-		}
-
-		try {
-			if (tab.webview) {
-				if (tab.webview.canGoBack()) {
-					this.back.removeClass("disabled");
-				} else {
-					this.back.addClass("disabled");
-				}
-
-				if (tab.webview.canGoForward()) {
-					this.forward.removeClass("disabled");
-				} else {
-					this.forward.addClass("disabled");
-				}
-			}
-		} catch (e) {}
-
-		$(".tab").removeClass("active");
-		el.addClass("active");
+	if (tab.ssl == true) {
+		this.ssl.css("color", "#6abf40");
+	} else {
+		this.ssl.css("color", "#f7f7f7");
 	}
+
+	if (tab.url_parts) {
+		$(".box .host").text(tab.url_parts.host);
+		$(".box .path").text(tab.url_parts.path);
+		$(".box .hash").text(tab.url_parts.hash);
+
+		if (this.input_blurred) $(".box input").val(tab.url);
+	}
+
+	try {
+		if (tab.webview) {
+			if (tab.webview.canGoBack()) {
+				this.back.removeClass("disabled");
+			} else {
+				this.back.addClass("disabled");
+			}
+
+			if (tab.webview.canGoForward()) {
+				this.forward.removeClass("disabled");
+			} else {
+				this.forward.addClass("disabled");
+			}
+		}
+	} catch (e) {}
+
+	$(".tab").removeClass("active");
+	el.addClass("active");
 }
 
 TabStripController.prototype.onTabClosed = function (tab) {
@@ -252,12 +251,14 @@ TabStripController.prototype.onTabClosed = function (tab) {
 		this.tabs.lastActive = lastActive;
 	} else {
 		console.log("No open tabs! Clearing location bar");
+
 		this.ssl.css("color", "#f7f7f7");
 		this.tabs.active = undefined;
 
-		$(".box .host").text("");
-		$(".box .path").text("");
-		$(".box .hash").text("");
+		_.each(["host", "path", "hash"], function (el) {
+			$(".box ." + el).text("");
+		});
+
 		$(".box input").val("");
 	}
 }
