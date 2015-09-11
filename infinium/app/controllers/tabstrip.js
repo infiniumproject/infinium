@@ -158,6 +158,8 @@ TabStripController.prototype.onTabAdded = function (tab) {
 	$("#" + tab_id + " .close").click(function () {
 		tab.close();
 	});
+
+	tab.update();
 }
 
 TabStripController.prototype.onTabActive = function (tab) {

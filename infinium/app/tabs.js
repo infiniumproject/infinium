@@ -247,7 +247,7 @@ Tabs.prototype.addTab = function (url) {
 	var tab = new TabView(this);
 	tab.setUrl(url);
 	tab.show();
-	
+
 	this.tabs.push(tab);
 	this.emit(Tabs.EVENT_TAB_ADDED, tab);
 }
