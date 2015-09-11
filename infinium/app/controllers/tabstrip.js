@@ -34,9 +34,6 @@ TabStripController.prototype.init = function () {
 	this.menu = this.strip.find(".command.menu");
 	this.ssl = this.strip.find(".box .ssl");
 	
-	// Tab elements (may not even be necessary)
-	this.tab_els = [];
-	
 	// One call to setcontroller on tabs, let the object know the controller is ready and to start firing tab events
 	this.tabs.setController(this);
 	
