@@ -250,8 +250,6 @@ Tabs.prototype.addTab = function (url) {
 	
 	this.tabs.push(tab);
 	this.emit(Tabs.EVENT_TAB_ADDED, tab);
-	
-	// return tab;
 }
 
 // Close all open tabs
