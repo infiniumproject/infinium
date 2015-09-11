@@ -181,7 +181,6 @@ TabStripController.prototype.onTabFavicon = function (tab) {
 		var img = new Image();
 		img.src = tab.favicon_data;
 		img.onload = function () {
-			tab.favicon_need_color = false;
 			var rgb = this.color.get(img);
 			el.find(".loading").css({
 				"background-color": "rgb(" + [rgb[0], rgb[1], rgb[2]].toString() + ")"
@@ -240,7 +239,7 @@ TabStripController.prototype.onTabClosed = function (tab) {
 	// If there's a better way of doing this, please impliment it!
 	if (this.tabs.tabs.length) {
 		var lastActive = this.tabs.lastActive;
-		
+
 		if (tab.id == lastActive.id) {
 			console.log("No lastActive");
 			_.last(this.tabs.tabs).show();
