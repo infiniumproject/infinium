@@ -238,30 +238,28 @@ TabStripController.prototype.onTabClosed = function (tab) {
 	this.repositionAllTabs();
 
 	// If there's a better way of doing this, please impliment it!
-	setTimeout(function () {
-		if (this.tabs.tabs.length) {
-			var lastActive = this.tabs.lastActive;
-			
-			if (tab.id == lastActive.id) {
-				console.log("No lastActive");
-				_.last(this.tabs.tabs).show();
-			} else {
-				console.log("Showing last active tab");
-				lastActive.show();
-			}
-
-			this.tabs.lastActive = lastActive;
+	if (this.tabs.tabs.length) {
+		var lastActive = this.tabs.lastActive;
+		
+		if (tab.id == lastActive.id) {
+			console.log("No lastActive");
+			_.last(this.tabs.tabs).show();
 		} else {
-			console.log("No open tabs! Clearing location bar");
-			this.ssl.css("color", "#f7f7f7");
-			this.tabs.active = undefined;
-
-			$(".box .host").text("");
-			$(".box .path").text("");
-			$(".box .hash").text("");
-			$(".box input").val("");
+			console.log("Showing last active tab");
+			lastActive.show();
 		}
-	}.bind(this), 0, tab);
+
+		this.tabs.lastActive = lastActive;
+	} else {
+		console.log("No open tabs! Clearing location bar");
+		this.ssl.css("color", "#f7f7f7");
+		this.tabs.active = undefined;
+
+		$(".box .host").text("");
+		$(".box .path").text("");
+		$(".box .hash").text("");
+		$(".box input").val("");
+	}
 }
 
 TabStripController.prototype.render = function () {
