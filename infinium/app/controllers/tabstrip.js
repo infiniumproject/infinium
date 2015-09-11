@@ -148,7 +148,6 @@ TabStripController.prototype.onTabAdded = function (tab) {
 	this.positionTab(tab, tab.parent.tabs.length - 1); // TODO: proper
 
 	$("#" + tab_id).click(function (e) {
-		e.stopPropagation();
 		tab.show();
 	});
 
