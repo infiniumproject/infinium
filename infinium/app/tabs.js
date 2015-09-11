@@ -3,6 +3,7 @@
 	Imports
 	--------------------------
 */
+
 var events = require("events"),
 	_ = require("lodash"),
 	https = require("https"),
@@ -47,11 +48,11 @@ TabView.prototype.initView = function () {
 	this.webview.addEventListener("ipc-message", function (e) {
 		switch (e.channel) {
 		case "alert":
-			console.log("alert: " + e.args[0]);
-			alert(e.args[0]);
+			console.log(this.url_parts.host + " says \"" + e.args[0] + "\"");
+			alert(this.url_parts.host + " says \"" + e.args[0] + "\"");
 			break;
 		}
-	});
+	}.bind(this));
 
 	// Add the webview to document
 	this.frameHolder.appendChild(this.webview);
