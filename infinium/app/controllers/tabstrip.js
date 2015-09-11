@@ -160,7 +160,6 @@ TabStripController.prototype.onTabAdded = function (tab) {
 }
 
 TabStripController.prototype.onTabActive = function (tab) {
-	console.log("AYYYYYYYYYYYYYYYYYYY");
 	if (tab.url_parts) {
 		$(".box .host").text(tab.url_parts.host);
 		$(".box .path").text(tab.url_parts.path);
