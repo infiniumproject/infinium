@@ -45,8 +45,13 @@ Themes.prototype.loadTheme = function (theme) {
 			console.dir(e);
 		}
 
-		global.theme.css = css.css;
-		
+		// Sometimes it returns an object, sometimes a string
+		if (typeof css == "object") {
+			global.theme.css = css.css;
+		} else {
+			global.theme.css = css;
+		}
+
 		if (this.cb) {
 			this.cb(this);
 		}
