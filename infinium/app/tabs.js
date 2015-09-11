@@ -40,6 +40,7 @@ TabView.prototype.initView = function () {
 	$(this.webview).attr("plugins", "on");
 	$(this.webview).attr("preload", "./modules/tabPreload.js");
 
+	// Pick a random popular user agent (for anonomity)
 	var userAgent = userAgents[_.random(0, userAgents.length)];
 	$(this.webview).attr("useragent", userAgent);
 
@@ -63,7 +64,7 @@ TabView.prototype.initView = function () {
 	this.ssl = null;
 	this.loadState = "loading";
 	
-	// Event handler
+	// Event handlers
 	this.webview.addEventListener("close", this.close.bind(this));
 
 	this.webview.addEventListener("crashed", function () {
