@@ -175,8 +175,10 @@ TabStripController.prototype.onTabFavicon = function (tab) {
 	var el = tab.tabstrip_el;
 	if (tab.has_favicon) {
 		el.find(".content").addClass("with-favicon");
-		el.find(".favicon").css("background-image", "url(" + tab.favicon_data + ")");
-		el.find(".favicon").css("display", "block");
+		el.find(".favicon").css({
+			"background-image": "url(" + tab.favicon_data + ")",
+			"display": "block",
+		});
 
 		var img = new Image();
 		img.src = tab.favicon_data;
