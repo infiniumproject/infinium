@@ -1,13 +1,19 @@
-// --------------------------
-// Imports
-// --------------------------
+/*
+	--------------------------
+	Imports
+	--------------------------
+*/
+
 var events = require("events"),
 	_ = require("lodash");
 
-// --------------------------
-// class: TabStripController
-// Manages the view for the tabstrip
-// --------------------------
+/*
+	--------------------------
+	class: TabStripController
+	Manages the view for the tabstrip
+	--------------------------
+*/
+
 function TabStripController() {
 	// tabstrip specific settings
 	this.tabWidth = 170;

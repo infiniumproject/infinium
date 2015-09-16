@@ -1,12 +1,16 @@
-// --------------------------
-// Imports
-// --------------------------
+/*
+	--------------------------
+	Imports
+	--------------------------
+*/
 
 var app = require("app");  // Module to control application life.
 
-// --------------------------
-// Global variables
-// --------------------------
+/*
+	--------------------------
+	Global variables
+	--------------------------
+*/
 
 // Import some stuff into the global namespace before doing anything else
 global.Infinium = global.Infinium || {
@@ -19,10 +23,12 @@ global.browser = null;
 // All browsers
 global.browsers = [];
 
-// --------------------------
-// Bootstrap
-// This is the first code executed when the browser is launched.
-// --------------------------
+/*
+	--------------------------
+	Bootstrap
+	This is the first code executed when the browser is launched.
+	--------------------------
+*/
 
 // Quit when all windows are closed.
 app.on("window-all-closed", function() {

@@ -1,26 +1,34 @@
-// --------------------------
-// Imports
-// --------------------------
+/*
+	--------------------------
+	Imports
+	--------------------------
+*/
+
 var path = require("path"),
 	fs = require("fs"),
 	less = require("less");
 
-// --------------------------
-// Global variables
-// --------------------------
+/*
+	--------------------------
+	Global variables
+	--------------------------
+*/
+
 global.theme = {};
 global.theme.name = "base";
 
-// --------------------------
-// class: Themes
-// This class handles loading themes (and template caching) before initializing the controllers
-// --------------------------
+/*
+	--------------------------
+	class: Themes
+	This class handles loading themes (and template caching) before initializing the controllers
+	--------------------------
+*/
 
 function Themes () {
 	
 }
 
-// todo: this class needs to be an eventemitter and theme ready from that should start the callback
+// TODO: this class needs to be an eventEmitter and theme ready from that should start the callback
 
 Themes.prototype.loadTheme = function (theme) {
 	var dir = path.join(__dirname, "..", "themes", global.theme.name);
@@ -45,7 +53,7 @@ Themes.prototype.loadTheme = function (theme) {
 			console.dir(e);
 		}
 
-		// Sometimes it returns an object, sometimes a string
+		// Fix for some weird platform-dependant thing
 		if (typeof css == "object") {
 			global.theme.css = css.css;
 		} else {
