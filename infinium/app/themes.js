@@ -25,23 +25,23 @@ global.theme.name = "base";
 */
 
 function Themes () {
-	
+
 }
 
 // TODO: this class needs to be an eventEmitter and theme ready from that should start the callback
 
 Themes.prototype.loadTheme = function (theme) {
 	var dir = path.join(__dirname, "..", "themes", global.theme.name);
-	
+
 	// Precompile / cache all templates
 	var templateDir = path.join(dir, "templates");
 	var files = fs.readdirSync(templateDir);
-	
+
 	for (var i=0; i<files.length; i++) {
 		var f = files[i];
 		global.theme[path.basename(f, ".hbs")] = Handlebars.compile(fs.readFileSync(path.join(templateDir, f)).toString());
 	}
-	
+
 	// Load all CSS files
 	var themeFile = fs.readFileSync(path.join(dir, "styles", "theme.less")).toString();
 	var css = less.render(themeFile, {
@@ -64,7 +64,7 @@ Themes.prototype.loadTheme = function (theme) {
 			this.cb(this);
 		}
 	}.bind(this));
-	
+
 	global.less = less;
 }
 

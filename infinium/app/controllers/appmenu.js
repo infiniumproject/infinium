@@ -1,5 +1,5 @@
 var remote = require("remote"),
-	BrowserWindow = remote.require("browser-window"); 
+	BrowserWindow = remote.require("browser-window");
 
 // --------------------------
 // class: BrowserController

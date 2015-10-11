@@ -16,7 +16,7 @@ var BrowserWindow = require("browser-window");  // Module to create native brows
 function Browser() {
 	this.width = 1280;
 	this.height = 768;
-	
+
 	this.window = new BrowserWindow({
 		width: this.width,
 		height: this.height,
@@ -26,12 +26,12 @@ function Browser() {
 			javascript: true
 		}
 	});
-	
+
 	this.window.loadUrl("file://" + __dirname + "/browser.html");
 	this.window.on("closed", function () {
 		this.window = null;
 	}.bind(this));
-	
+
 	this.window.focus();
 }
 

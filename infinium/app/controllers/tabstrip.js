@@ -18,7 +18,10 @@ function TabStripController() {
 	// tabstrip specific settings
 	this.tabWidth = 170;
 	this.tabMargin = 0;
-	
+
+	// List of previously active tabs
+	this.tabHistory = [];
+
 	// keep local reference to the tab manager
 	this.tabs = global.Infinium.tabs;
 	this.init();
@@ -29,7 +32,7 @@ function TabStripController() {
 TabStripController.prototype.init = function () {
 	// Only one call to render
 	this.render();
-	
+
 	// Local element references
 	this.strip = $(".strip");
 	this.wrapper = this.strip.find(".wrapper");
@@ -39,10 +42,10 @@ TabStripController.prototype.init = function () {
 	this.newtab = this.strip.find(".command.new");
 	this.menu = this.strip.find(".command.menu");
 	this.ssl = this.strip.find(".box .ssl");
-	
+
 	// One call to setcontroller on tabs, let the object know the controller is ready and to start firing tab events
 	this.tabs.setController(this);
-	
+
 	// Register events from the tab system
 	this.tabs.on(Tabs.EVENT_TAB_ADDED, this.onTabAdded.bind(this));
 	this.tabs.on(Tabs.EVENT_TAB_CLOSED, this.onTabClosed.bind(this));
@@ -74,7 +77,7 @@ TabStripController.prototype.init = function () {
 
 		return false;
 	}.bind(this));
-	
+
 	// Register events from the UI
 	$(".command.new").click(this.onAddNewTab.bind(this));
 	$(".command.forward").click(this.onGoForward.bind(this));
@@ -87,7 +90,7 @@ TabStripController.prototype.init = function () {
 
 // Methods
 TabStripController.prototype.onAddNewTab = function () {
-	Infinium.tabs.addTab("http://a.x");
+	Infinium.tabs.addTab("http://fsf.org");
 }
 
 TabStripController.prototype.onGoForward = function () {
@@ -118,11 +121,11 @@ TabStripController.prototype.repositionAllTabs = function () {
 TabStripController.prototype.positionTab = function (tab, idx) {
 	var el = tab.tabstrip_el;
 	el.css("left", idx * (this.tabWidth + this.tabMargin));
-	
+
 	if (tab.parent.active == tab) {
 		var tabs_width = tab.parent.tabs.length * (this.tabWidth + this.tabMargin);
 		var tabs_left = this.tabs_el.position().left;
-		
+
 		if ((idx + 1) * (this.tabWidth + this.tabMargin) + tabs_left > this.wrapper.width()) {
 			this.tabs_el.css({
 				"left": (this.wrapper.width() - (idx + 1) * (this.tabWidth + this.tabMargin)) + "px"
@@ -138,16 +141,16 @@ TabStripController.prototype.positionTab = function (tab, idx) {
 // Tab Events
 TabStripController.prototype.onTabAdded = function (tab) {
 	var tab_id = _.uniqueId("tab_");
-	
+
 	var tab_html = global.theme.tab({
 		id: tab_id
 	});
-	
+
 	var el = $(tab_html);
 	this.tabs_el.append(el);
-	
+
 	tab.tabstrip_el = el;
-	
+
 	console.log("-- tab added --");
 	this.onTabState(tab);
 	this.positionTab(tab, tab.parent.tabs.length - 1); // TODO: proper
@@ -200,7 +203,7 @@ TabStripController.prototype.onTabFavicon = function (tab) {
 
 TabStripController.prototype.onTabState = function (tab) {
 	var el = tab.tabstrip_el;
-	el.find(".title").text(tab.title);
+	el.find(".title").text(tab.title || (tab.url_parts ? tab.url_parts.host + tab.url_parts.path : ""));
 
 	if (this.tabs.active != tab) return;
 

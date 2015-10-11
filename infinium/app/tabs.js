@@ -11,7 +11,7 @@ var events = require("events"),
 	userAgents = require("./modules/useragents"),
 	urll = require("url");
 
-/* 
+/*
 	--------------------------
 	class: TabView
 	The backing model/controller for an individual tab. Manages the WebView and is used as state for the controller
@@ -23,7 +23,7 @@ function TabView (p) {
 	this.tabstrip_el = null;
 
 	this.has_favicon = false;
-	
+
 	this.webview = null;
 	this.id = _.uniqueId("webframe_");
 }
@@ -34,7 +34,7 @@ TabView.prototype.initView = function () {
 	this.frameHolder = document.createElement("div");
 	this.frameHolder.id = this.id + "_frame";
 	this.frameHolder.classList.add("webframe");
-	
+
 	// Create the webview and set options
 	this.webview = new WebView();
 	$(this.webview).attr("plugins", "on");
@@ -57,47 +57,47 @@ TabView.prototype.initView = function () {
 	// Add the webview to document
 	this.frameHolder.appendChild(this.webview);
 	$("#webframes").append(this.frameHolder);
-	
+
 	// Set some initial tab properties
 	this.active = true;
 	this.favicon = null;
 	this.ssl = null;
 	this.loadState = "loading";
-	
+
 	// Event handlers
 	this.webview.addEventListener("close", this.close.bind(this));
 
 	this.webview.addEventListener("crashed", function () {
 		this.loadState = "crashed";
 	}.bind(this));
-	
+
 	this.webview.addEventListener("destroyed", function () {
 		this.loadState = "crashed"; // I think...
 		console.log("The \"destroyed\" thing happened");
 	}.bind(this));
-	
+
 	this.webview.addEventListener("did-fail-load", function () {
 		console.log("The \"fail-load\" thing happened");
 	}.bind(this));
-	
+
 	this.webview.addEventListener("did-finish-load", function () {
 		this.loadState = "done";
 		this.getUrlParts();
 		this.update();
 	}.bind(this));
-	
+
 	this.webview.addEventListener("did-start-loading", function () {
 		this.loadState = "loading";
 		this.getUrlParts();
 		this.update();
 	}.bind(this));
-	
+
 	this.webview.addEventListener("did-stop-loading", function () {
 		this.loadState = "done";
 		this.getUrlParts();
 		this.update();
 	}.bind(this));
-	
+
 	this.webview.addEventListener("new-window", function (e) {
 		// check for window-bombing here
 		this.parent.addTab(e.url);
@@ -172,7 +172,7 @@ TabView.prototype.setUrl = function (url) {
 	if (!this.webview) {
 		this.initView();
 	}
-	
+
 	this.ssl = null;
 	this.webview.src = url;
 }
@@ -211,7 +211,7 @@ TabView.prototype.show = function () {
 function Tabs () {
 	// when the TabStripController is created, this object will hold a reference to it for callbacks
 	this.controller = null;
-	
+
 	// array of created Tab objects
 	this.tabs = [];
 }

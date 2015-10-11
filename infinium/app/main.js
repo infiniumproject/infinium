@@ -43,7 +43,7 @@ app.on("ready", function() {
 	// Create the original browser window.
 	global.browser = new Infinium.Browser();
 	global.browsers.push(global.browser);
-  
+
 	/* mainWindow = new BrowserWindow({width: 800, height: 600});
 
 	// and load the index.html of the app.
