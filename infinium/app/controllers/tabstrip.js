@@ -19,8 +19,38 @@ function TabStripController() {
 	this.tabWidth = 170;
 	this.tabMargin = 0;
 
-	// List of previously active tabs
+	// List of previously active tabs with custom methods
 	this.tabHistory = [];
+
+	this.tabHistory.parent = this;
+
+	this.tabHistory.remove = function (tab) {
+		var index = _.indexOf(this, tab.id);
+		var rest = this.slice(index + 1 || this.length);
+		this.length = index < 0 ? this.length + index : index;
+		this.push.apply(this, rest);
+	}
+
+	this.tabHistory.add = function (tab) {
+		if (_.contains(this, tab.id)) {
+			this.remove(tab)
+		}
+
+		this.push(tab.id);
+	}
+
+	this.tabHistory.getLast = function () {
+		var id = _.last(this);
+		var tabs = this.parent.tabs.tabs;
+
+		var lastTab = null;
+		_.each(tabs, function (tab) {
+			if (tab.id != id) return;
+			lastTab = tab;
+		});
+
+		return lastTab;
+	}
 
 	// keep local reference to the tab manager
 	this.tabs = global.Infinium.tabs;
@@ -90,7 +120,7 @@ TabStripController.prototype.init = function () {
 
 // Methods
 TabStripController.prototype.onAddNewTab = function () {
-	Infinium.tabs.addTab("http://fsf.org");
+	Infinium.tabs.addTab("http://localhost");
 }
 
 TabStripController.prototype.onGoForward = function () {
@@ -175,6 +205,15 @@ TabStripController.prototype.onTabActive = function (tab) {
 		if (this.input_blurred) $(".box input").val(tab.url);
 	}
 
+	this.tabHistory.add(tab);
+
+	var hIds = [];
+	_.each(this.tabHistory, function (id) {
+		hIds.push(id);
+	});
+
+	console.log(hIds);
+
 	setTimeout(this.onTabState.bind(this), 0, tab);
 }
 
@@ -245,19 +284,10 @@ TabStripController.prototype.onTabClosed = function (tab) {
 	this.tabs_el[0].removeChild(tab.tabstrip_el[0]);
 	this.repositionAllTabs();
 
-	// If there's a better way of doing this, please impliment it!
-	if (this.tabs.tabs.length) {
-		var lastActive = this.tabs.lastActive;
+	this.tabHistory.remove(tab);
 
-		if (tab.id == lastActive.id) {
-			console.log("No lastActive");
-			_.last(this.tabs.tabs).show();
-		} else {
-			console.log("Showing last active tab");
-			lastActive.show();
-		}
-
-		this.tabs.lastActive = lastActive;
+	if (this.tabHistory.length) {
+		this.tabHistory.getLast().show();
 	} else {
 		console.log("No open tabs! Clearing location bar");
 
