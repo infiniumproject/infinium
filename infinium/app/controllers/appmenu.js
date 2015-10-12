@@ -53,19 +53,18 @@ AppMenuController.prototype.onCloseAllTabs = function () {
 	console.log("ayy")
 }
 
+AppMenuController.prototype.addEvents = _.once(function () {
+	$("#browser_devtools").click(this.onToggleBrowserDevtools);
+	$("#tab_devtools").click(this.onToggleTabDevtools);
+	$("#close_all_tabs").click(this.onCloseAllTabs);
+	$("#close_browser").click(this.onCloseBrowser);
+});
+
 AppMenuController.prototype.show = function () {
 	$(".app-menu").addClass("show");
 	$(".app-menu-cover").addClass("show");
 
-
-	if (!this.events_added) {
-		this.events_added = true;
-
-		$("#browser_devtools").click(this.onToggleBrowserDevtools);
-		$("#tab_devtools").click(this.onToggleTabDevtools);
-		$("#close_all_tabs").click(this.onCloseAllTabs);
-		$("#close_browser").click(this.onCloseBrowser);
-	}
+	this.addEvents();
 }
 
 AppMenuController.prototype.render = function () {
