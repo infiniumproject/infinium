@@ -1,3 +1,9 @@
+/*
+	--------------------------
+	Global variables
+	--------------------------
+*/
+
 global.Infinium = global.Infinium || {};
 window.Infinium = global.Infinium;
 
@@ -22,6 +28,6 @@ $(function(){
 
 	// after the themes are loaded do the rest of the initialization.
 	global.themes.cb = start;
-	
+
 	themes.loadTheme(global.theme.name);
 });

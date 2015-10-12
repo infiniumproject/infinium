@@ -1,15 +1,21 @@
-// --------------------------
-// Imports
-// --------------------------
+/*
+	--------------------------
+	Imports
+	--------------------------
+*/
 
-var remote = require("remote"),
-	BrowserWindow = remote.require("browser-window"),
-	app = remote.require("app");
+var remote = require("remote");
 
-// --------------------------
-// class: WindowController
-// Manages window view objects (Main menu, minimize, maximize, close, etc)
-// --------------------------
+var app = remote.require("app"),
+	BrowserWindow = remote.require("browser-window");
+
+/*
+	--------------------------
+	class: WindowController
+	Manages window view objects (Main menu, minimize, maximize, close, etc)
+	--------------------------
+*/
+
 function WindowController () {
 	this.init();
 }

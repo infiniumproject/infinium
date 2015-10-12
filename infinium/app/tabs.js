@@ -4,12 +4,13 @@
 	--------------------------
 */
 
-var events = require("events"),
-	_ = require("lodash"),
-	https = require("https"),
+var _ = require("lodash"),
+	urll = require("url"),
 	http = require("http"),
-	userAgents = require("./modules/useragents"),
-	urll = require("url");
+	https = require("https"),
+	events = require("events")
+
+var userAgents = require("./modules/useragents");
 
 /*
 	--------------------------

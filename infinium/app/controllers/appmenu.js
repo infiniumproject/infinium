@@ -1,10 +1,20 @@
-var remote = require("remote"),
-	BrowserWindow = remote.require("browser-window");
+/*
+	--------------------------
+	Imports
+	--------------------------
+*/
 
-// --------------------------
-// class: BrowserController
-// Manages the view for the window
-// -------------------------
+var remote = require("remote");
+
+var BrowserWindow = remote.require("browser-window");
+
+/*
+	--------------------------
+	class: AppMenuController
+	Manages togglable app menu
+	--------------------------
+*/
+
 function AppMenuController () {
 	this.init();
 }

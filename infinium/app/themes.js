@@ -4,8 +4,8 @@
 	--------------------------
 */
 
-var path = require("path"),
-	fs = require("fs"),
+var fs = require("fs"),
+	path = require("path"),
 	less = require("less");
 
 /*
@@ -47,8 +47,7 @@ Themes.prototype.loadTheme = function (theme) {
 	var css = less.render(themeFile, {
 		paths: [path.join(dir, "styles")],
 		filename: "theme.less"
-	},
-	function(e, css) {
+	}, function (e, css) {
 		if (e) {
 			console.dir(e);
 		}

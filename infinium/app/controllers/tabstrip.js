@@ -4,8 +4,8 @@
 	--------------------------
 */
 
-var events = require("events"),
-	_ = require("lodash");
+var _ = require("lodash"),
+	events = require("events");
 
 /*
 	--------------------------

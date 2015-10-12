@@ -1,7 +1,10 @@
-// --------------------------
-// class: BrowserController
-// Manages the view for the window
-// --------------------------
+/*
+	--------------------------
+	class: BrowserController
+	Manages the view for the window
+	--------------------------
+*/
+
 function BrowserController() {
 
 }
