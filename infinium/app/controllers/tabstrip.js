@@ -207,13 +207,6 @@ TabStripController.prototype.onTabActive = function (tab) {
 
 	this.tabHistory.add(tab);
 
-	var hIds = [];
-	_.each(this.tabHistory, function (id) {
-		hIds.push(id);
-	});
-
-	console.log(hIds);
-
 	setTimeout(this.onTabState.bind(this), 0, tab);
 }
 
