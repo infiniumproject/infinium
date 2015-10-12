@@ -27,24 +27,20 @@ function TabStripController() {
 	this.tabHistory.remove = function (tab) {
 		var index = _.indexOf(this, tab.id);
 		var rest = this.slice(index + 1 || this.length);
-		this.length = index < 0 ? this.length + index : index;
+		this.length = index;
 		this.push.apply(this, rest);
 	}
 
 	this.tabHistory.add = function (tab) {
-		if (_.contains(this, tab.id)) {
-			this.remove(tab)
-		}
-
+		if (_.contains(this, tab.id)) this.remove(tab);
 		this.push(tab.id);
 	}
 
 	this.tabHistory.getLast = function () {
-		var id = _.last(this);
-		var tabs = this.parent.tabs.tabs;
-
 		var lastTab = null;
-		_.each(tabs, function (tab) {
+		var id = _.last(this);
+
+		_.each(this.parent.tabs.tabs, function (tab) {
 			if (tab.id != id) return;
 			lastTab = tab;
 		});
