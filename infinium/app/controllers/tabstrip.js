@@ -287,10 +287,9 @@ TabStripController.prototype.onTabClosed = function (tab) {
 		this.ssl.css("color", "#f7f7f7");
 		this.tabs.active = undefined;
 
-		_.each(["host", "path", "hash"], function (el) {
-			$(".box ." + el).text("");
-		});
-
+		$(".box .host").text("");
+		$(".box .path").text("");
+		$(".box .hash").text("");
 		$(".box input").val("");
 	}
 }
