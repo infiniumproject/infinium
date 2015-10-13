@@ -3,9 +3,7 @@
 	Global variables
 	--------------------------
 */
-
-global.Infinium = global.Infinium || {};
-window.Infinium = global.Infinium;
+global.Infinium = {};
 
 function start () {
 	// instatiate the browser objects (tabs, bookmarks, history, downloads etc)
@@ -21,7 +19,7 @@ function start () {
 }
 
 /* bootstrap / initialization */
-$(function(){
+$(function (){
 	var Themes = require("./themes");
 	var themes = new Themes();
 	global.themes = themes;

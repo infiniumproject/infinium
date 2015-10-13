@@ -30,9 +30,13 @@ AppMenuController.prototype.hideClickHandler = function () {
 	browser.appMenu.hide();
 }
 
-AppMenuController.prototype.hide = function() {
+AppMenuController.prototype.hide = function () {
 	$(".app-menu").removeClass("show");
 	$(".app-menu-cover").removeClass("show");
+}
+
+AppMenuController.prototype.onNewWindow = function () {
+	var browser = new remote.getGlobal("Infinium").Browser();
 }
 
 AppMenuController.prototype.onToggleBrowserDevtools = function () {
@@ -55,7 +59,11 @@ AppMenuController.prototype.onToggleTabDevtools = function () {
 }
 
 AppMenuController.prototype.onCloseBrowser = function () {
-	app.quit(); // temporary until we provide support for multiple windows
+	app.quit();
+}
+
+AppMenuController.prototype.onCloseWindow = function () {
+	window.close();
 }
 
 AppMenuController.prototype.onCloseAllTabs = function () {
@@ -64,9 +72,11 @@ AppMenuController.prototype.onCloseAllTabs = function () {
 }
 
 AppMenuController.prototype.addEvents = _.once(function () {
+	$("#new_window").click(this.onNewWindow);
 	$("#browser_devtools").click(this.onToggleBrowserDevtools);
 	$("#tab_devtools").click(this.onToggleTabDevtools);
 	$("#close_all_tabs").click(this.onCloseAllTabs);
+	$("#close_window").click(this.onCloseWindow);
 	$("#close_browser").click(this.onCloseBrowser);
 });
 

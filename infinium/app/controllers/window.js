@@ -24,7 +24,7 @@ WindowController.prototype.init = function () {
 	this.render();
 
 	$(".cmd.close").click(function () {
-		app.quit(); // temporary until we provide support for multiple windows
+		window.close();
 	});
 
 	$(".cmd.minimize").click(function () {

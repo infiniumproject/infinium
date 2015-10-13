@@ -231,7 +231,12 @@ TabStripController.prototype.onTabFavicon = function (tab) {
 
 TabStripController.prototype.onTabState = function (tab) {
 	var el = tab.tabstrip_el;
-	el.find(".title").text(tab.title || (tab.url_parts ? tab.url_parts.host + tab.url_parts.path : ""));
+	var title = tab.title || "";
+
+	if (title) {
+		el.find(".title").text(title);
+		$("title").text(title + " - Infinium");
+	}
 
 	if (this.tabs.active != tab) return;
 
@@ -278,7 +283,7 @@ TabStripController.prototype.onTabClosed = function (tab) {
 	if (this.tabHistory.length) {
 		this.tabHistory.getLast().show();
 	} else {
-		console.log("No open tabs! Clearing location bar");
+		console.log("No open tabs, clearing.");
 
 		this.ssl.css("color", "#f7f7f7");
 		this.tabs.active = undefined;
