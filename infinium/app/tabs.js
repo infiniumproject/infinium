@@ -192,7 +192,6 @@ TabView.prototype.close = function () {
 
 // Show tab
 TabView.prototype.show = function () {
-	this.parent.lastActive = (this == this.parent.active ? this.parent.lastActive : this.parent.active);
 	this.parent.active = this;
 
 	$(".webframe").removeClass("visible");
