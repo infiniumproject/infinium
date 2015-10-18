@@ -267,8 +267,7 @@ Tabs.prototype.addTab = function (url) {
 // Close all open tabs
 Tabs.prototype.closeAll = function () {
 	console.dir(this.tabs);
-	_.each(this.tabs, function (tab) {
-		console.log(tab);
-		tab.close();
-	});
+	_.times(this.tabs.length, function () {
+		this.tabs[0].close();
+	}.bind(this));
 }

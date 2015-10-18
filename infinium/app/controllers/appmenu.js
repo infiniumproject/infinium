@@ -67,8 +67,7 @@ AppMenuController.prototype.onCloseWindow = function () {
 }
 
 AppMenuController.prototype.onCloseAllTabs = function () {
-	// browser.tabStrip.tabs.closeAll();
-	console.log("ayy")
+	browser.tabStrip.tabs.closeAll();
 }
 
 AppMenuController.prototype.addEvents = _.once(function () {
