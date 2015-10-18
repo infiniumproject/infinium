@@ -304,6 +304,8 @@ TabStripController.prototype.onTabClosed = function (tab) {
 		$(".box .path").text("");
 		$(".box .hash").text("");
 		$(".box input").val("");
+
+		$("title").text("Infinium");
 	}
 }
 
