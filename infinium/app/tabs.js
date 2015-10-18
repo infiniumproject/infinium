@@ -137,6 +137,7 @@ TabView.prototype.initView = function () {
 // Fetch and set favicon
 TabView.prototype.updateFavicon = function () {
 	this.old_favicon_url = this.favicon_url;
+	var parsedUrl = urll.parse(this.favicon_url);
 
 	var favicon_data = [];
 	function respHandler (resp)  {
@@ -150,10 +151,10 @@ TabView.prototype.updateFavicon = function () {
 		}.bind(this));
 	}
 
-	if (this.favicon_url.startsWith("https://")) {
-		https.get(urll.parse(this.favicon_url), respHandler.bind(this));
+	if (parsedUrl.protocol == "https:") {
+		https.get(parsedUrl, respHandler.bind(this));
 	} else {
-		http.get(urll.parse(this.favicon_url), respHandler.bind(this));
+		http.get(parsedUrl, respHandler.bind(this));
 	}
 }
 
