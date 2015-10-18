@@ -75,7 +75,9 @@ TabStripController.prototype.init = function () {
 	// Register events from the tab system
 	this.tabs.on(Tabs.EVENT_TAB_ADDED, this.onTabAdded.bind(this));
 	this.tabs.on(Tabs.EVENT_TAB_CLOSED, this.onTabClosed.bind(this));
-	this.tabs.on(Tabs.EVENT_TAB_STATE, this.onTabState.bind(this));
+	this.tabs.on(Tabs.EVENT_TAB_TITLE, this.onTabTitle.bind(this));
+	this.tabs.on(Tabs.EVENT_TAB_URL, this.onTabUrl.bind(this));
+	this.tabs.on(Tabs.EVENT_TAB_SSL, this.onTabSsl.bind(this));
 	this.tabs.on(Tabs.EVENT_TAB_ACTIVE, this.onTabActive.bind(this));
 	this.tabs.on(Tabs.EVENT_TAB_FAVICON, this.onTabFavicon.bind(this));
 
@@ -178,7 +180,6 @@ TabStripController.prototype.onTabAdded = function (tab) {
 	tab.tabstrip_el = el;
 
 	console.log("-- tab added --");
-	this.onTabState(tab);
 	this.positionTab(tab, tab.parent.tabs.length - 1); // TODO: proper
 
 	$("#" + tab_id).click(function () {
@@ -190,24 +191,24 @@ TabStripController.prototype.onTabAdded = function (tab) {
 		tab.close();
 	});
 
-	tab.update();
+	tab.show();
 }
 
 TabStripController.prototype.onTabActive = function (tab) {
-	if (tab.url_parts) {
-		$(".box .host").text(tab.url_parts.host);
-		$(".box .path").text(tab.url_parts.path);
-		$(".box .hash").text(tab.url_parts.hash);
-		if (this.input_blurred) $(".box input").val(tab.url);
-	}
+	var el = tab.tabstrip_el;
 
 	this.tabHistory.add(tab);
 
-	setTimeout(this.onTabState.bind(this), 0, tab);
+	this.onTabUrl(tab);
+	this.onTabTitle(tab);
+
+	$(".tab").removeClass("active");
+	el.addClass("active");
 }
 
 TabStripController.prototype.onTabFavicon = function (tab) {
 	var el = tab.tabstrip_el;
+
 	if (tab.has_favicon) {
 		el.find(".content").addClass("with-favicon");
 		el.find(".favicon").css({
@@ -220,7 +221,7 @@ TabStripController.prototype.onTabFavicon = function (tab) {
 		img.onload = function () {
 			var rgb = this.color.get(img);
 			el.find(".loading").css({
-				"background-color": "rgb(" + [rgb[0], rgb[1], rgb[2]].toString() + ")"
+				"background-color": "rgb(" + [rgb[0], rgb[1], rgb[2]].join() + ")"
 			});
 		}.bind(this);
 	} else {
@@ -229,22 +230,28 @@ TabStripController.prototype.onTabFavicon = function (tab) {
 	}
 }
 
-TabStripController.prototype.onTabState = function (tab) {
+TabStripController.prototype.onTabTitle = function (tab) {
 	var el = tab.tabstrip_el;
+
 	var title = tab.title || "";
+
+	console.log(title)
 
 	if (title) {
 		el.find(".title").text(title);
-		$("title").text(title + " - Infinium");
 	}
 
 	if (this.tabs.active != tab) return;
 
-	if (tab.ssl == true) {
-		this.ssl.css("color", "#6abf40");
+	if (title) {
+		$("title").text(title + " - Infinium");
 	} else {
-		this.ssl.css("color", "#f7f7f7");
+		$("title").text("Infinium");
 	}
+}
+
+TabStripController.prototype.onTabUrl = function (tab) {
+	if (this.tabs.active != tab) return;
 
 	if (tab.url_parts) {
 		$(".box .host").text(tab.url_parts.host);
@@ -269,9 +276,14 @@ TabStripController.prototype.onTabState = function (tab) {
 			}
 		}
 	} catch (e) {}
+}
 
-	$(".tab").removeClass("active");
-	el.addClass("active");
+TabStripController.prototype.onTabSsl = function (tab) {
+	if (tab.ssl == true) {
+		this.ssl.css("color", "#6abf40");
+	} else {
+		this.ssl.css("color", "#f7f7f7");
+	}
 }
 
 TabStripController.prototype.onTabClosed = function (tab) {

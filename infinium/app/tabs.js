@@ -83,20 +83,18 @@ TabView.prototype.initView = function () {
 
 	this.webview.addEventListener("did-finish-load", function () {
 		this.loadState = "done";
-		this.getUrlParts();
-		this.update();
 	}.bind(this));
 
 	this.webview.addEventListener("did-start-loading", function () {
 		this.loadState = "loading";
-		this.getUrlParts();
-		this.update();
+		this.updateTitle();
+		this.updateUrl();
 	}.bind(this));
 
 	this.webview.addEventListener("did-stop-loading", function () {
 		this.loadState = "done";
-		this.getUrlParts();
-		this.update();
+		this.updateTitle();
+		this.updateUrl();
 	}.bind(this));
 
 	this.webview.addEventListener("new-window", function (e) {
@@ -106,39 +104,34 @@ TabView.prototype.initView = function () {
 
 	this.webview.addEventListener("page-title-set", function (e) {
 		this.title = e.title;
-		this.update();
+		this.updateTitle();
 	}.bind(this));
 
 	this.webview.addEventListener("page-favicon-updated", function (e) {
 		this.favicon_url = e.favicons[0];
 		this.updateFavicon();
-		this.update();
 	}.bind(this));
 
 	this.webview.addEventListener("did-get-response-details", function (e) {
 		// Stuff for SSL indicator
 		if (this.ssl == false) return;
 
-		var protocol = urll.parse(e.newUrl).protocol;
-		if (protocol == "https:") {
-			this.ssl = true;
+		var ssl;
+		if (urll.parse(e.newUrl).protocol == "https:") {
+			ssl = true;
 		} else {
-			this.ssl = false;
+			ssl = false;
 		}
 
-		this.update();
+		if (this.ssl != ssl) {
+			this.ssl = ssl;
+			this.updateSsl();
+		}
 	}.bind(this));
 
 	this.webview.addEventListener("did-get-redirect-request", function (e) {
-		this.getUrlParts();
-		this.update();
+		this.updateUrl();
 	}.bind(this));
-}
-
-// Process and set URL
-TabView.prototype.getUrlParts = function () {
-	this.url = this.webview.getUrl();
-	this.url_parts = urll.parse(this.url);
 }
 
 // Fetch and set favicon
@@ -152,6 +145,7 @@ TabView.prototype.updateFavicon = function () {
 			var buf = Buffer.concat(favicon_data);
 			this.favicon_data = "data:image/x-icon;base64," + buf.toString("base64");
 			this.has_favicon = true;
+
 			this.parent.emit(Tabs.EVENT_TAB_FAVICON, this);
 		}.bind(this));
 	}
@@ -163,9 +157,26 @@ TabView.prototype.updateFavicon = function () {
 	}
 }
 
-// Update tab on tabstrip
-TabView.prototype.update = function () {
-	this.parent.emit(Tabs.EVENT_TAB_STATE, this);
+// Update tab title
+TabView.prototype.updateTitle = function () {
+	if (!this.title) {
+		this.title = this.webview.getTitle();
+	}
+
+	this.parent.emit(Tabs.EVENT_TAB_TITLE, this);
+}
+
+// Update tab URL and parts
+TabView.prototype.updateUrl = function () {
+	this.url = this.webview.getUrl();
+	this.url_parts = urll.parse(this.url);
+
+	this.parent.emit(Tabs.EVENT_TAB_URL, this);
+}
+
+// Update tab SSL status
+TabView.prototype.updateSsl = function () {
+	this.parent.emit(Tabs.EVENT_TAB_SSL, this);
 }
 
 // Set URL of tab
@@ -194,10 +205,10 @@ TabView.prototype.close = function () {
 TabView.prototype.show = function () {
 	this.parent.active = this;
 
+	this.parent.emit(Tabs.EVENT_TAB_ACTIVE, this);
+
 	$(".webframe").removeClass("visible");
 	this.frameHolder.classList.add("visible");
-
-	this.parent.emit(Tabs.EVENT_TAB_ACTIVE, this);
 }
 
 /*
@@ -227,6 +238,7 @@ Tabs.prototype.__proto__ = events.EventEmitter.prototype;
 
 Tabs.EVENT_TAB_ADDED = "TabAdded";
 Tabs.EVENT_TAB_CLOSED = "TabClosed";
+Tabs.EVENT_TAB_TITLE = "TabTitle";
 Tabs.EVENT_TAB_STATE = "TabState";
 Tabs.EVENT_TAB_ACTIVE = "TabActive";
 Tabs.EVENT_TAB_FAVICON = "TabFavicon";
@@ -246,7 +258,6 @@ Tabs.prototype.setController = function (controller) {
 Tabs.prototype.addTab = function (url) {
 	var tab = new TabView(this);
 	tab.setUrl(url);
-	tab.show();
 
 	this.tabs.push(tab);
 	this.emit(Tabs.EVENT_TAB_ADDED, tab);
