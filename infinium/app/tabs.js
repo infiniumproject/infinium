@@ -172,6 +172,8 @@ TabView.prototype.updateUrl = function () {
 	this.url = this.webview.getUrl();
 	this.url_parts = urll.parse(this.url);
 
+	this.title = null;
+
 	this.parent.emit(Tabs.EVENT_TAB_URL, this);
 }
 
