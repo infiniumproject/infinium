@@ -77,8 +77,8 @@ TabView.prototype.initView = function () {
 		console.log("The \"destroyed\" thing happened");
 	}.bind(this));
 
-	this.webview.addEventListener("did-fail-load", function () {
-		console.log("The \"fail-load\" thing happened");
+	this.webview.addEventListener("did-fail-load", function (e) {
+		this.webview.send("page", global.theme.errorpage(e));
 	}.bind(this));
 
 	this.webview.addEventListener("did-finish-load", function () {
