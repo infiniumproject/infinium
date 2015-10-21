@@ -219,9 +219,8 @@ TabStripController.prototype.onTabFavicon = function (tab) {
 		var img = new Image();
 		img.src = tab.favicon_data;
 		img.onload = function () {
-			var rgb = this.color.get(img);
 			el.find(".loading").css({
-				"background-color": "rgb(" + [rgb[0], rgb[1], rgb[2]].join() + ")"
+				"background-color": "rgb(" + this.color.get(img) + ")"
 			});
 		}.bind(this);
 	} else {

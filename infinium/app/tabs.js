@@ -52,6 +52,9 @@ TabView.prototype.initView = function () {
 			console.log(this.url_parts.host + " says \"" + e.args[0] + "\"");
 			alert(this.url_parts.host + " says \"" + e.args[0] + "\"");
 			break;
+		case "inspectElement":
+			this.webview.inspectElement(e.args[0], e.args[1]);
+			break;
 		}
 	}.bind(this));
 
@@ -130,7 +133,7 @@ TabView.prototype.initView = function () {
 	}.bind(this));
 
 	this.webview.addEventListener("did-get-redirect-request", function (e) {
-		this.updateUrl();
+		this.updateUrl(e.newUrl);
 	}.bind(this));
 }
 
@@ -141,6 +144,12 @@ TabView.prototype.updateFavicon = function () {
 
 	var favicon_data = [];
 	function respHandler (resp)  {
+		if (resp.statusCode != 200) {
+			this.has_favicon = false;
+			this.parent.emit(Tabs.EVENT_TAB_FAVICON, this);
+			return;
+		}
+
 		resp.on("data", function (chunk) { favicon_data.push(chunk); });
 		resp.on("end", function () {
 			var buf = Buffer.concat(favicon_data);
@@ -168,8 +177,8 @@ TabView.prototype.updateTitle = function () {
 }
 
 // Update tab URL and parts
-TabView.prototype.updateUrl = function () {
-	this.url = this.webview.getUrl();
+TabView.prototype.updateUrl = function (url) {
+	this.url = url || this.webview.getUrl();
 	this.url_parts = urll.parse(this.url);
 
 	this.title = null;
