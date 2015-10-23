@@ -17,19 +17,23 @@ var Menu = remote.require("menu"),
 */
 
 // Context menu
-var menu = new Menu();
-menu.append(new MenuItem({
-	label: "Inspect Element",
-	click: function () {
-		ipc.sendToHost("inspectElement", menu.clickEvent.clientX, menu.clickEvent.clientY);
-	}
-}));
+function initContextMenu() {
+	var menu = new Menu();
+	menu.append(new MenuItem({
+		label: "Inspect Element",
+		click: function () {
+			ipc.sendToHost("inspectElement", menu.clickEvent.clientX, menu.clickEvent.clientY);
+		}
+	}));
 
-window.addEventListener("contextmenu", function (e) {
-	e.preventDefault();
-	menu.clickEvent = e;
-	menu.popup(remote.getCurrentWindow());
-}, false);
+	window.addEventListener("contextmenu", function (e) {
+		e.preventDefault();
+		menu.clickEvent = e;
+		menu.popup(remote.getCurrentWindow());
+	}, false);
+}
+
+initContextMenu();
 
 // Custom alert function
 window.alert = function (message) {
@@ -45,4 +49,5 @@ window.alert = function (message) {
 // New page listener
 ipc.on("page", function (html) {
 	document.write(html);
+	initContextMenu();
 });
