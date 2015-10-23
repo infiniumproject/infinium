@@ -89,6 +89,9 @@ TabView.prototype.initView = function () {
 	}.bind(this));
 
 	this.webview.addEventListener("did-start-loading", function () {
+		// Small hack to fix preload on pages with no javascript
+		this.webview.executeJavaScript("");
+		
 		this.loadState = "loading";
 		this.updateTitle();
 		this.updateUrl();
