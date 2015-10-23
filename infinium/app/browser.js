@@ -29,7 +29,7 @@ function Browser() {
 
 	// todo change to global brand
 	this.window.setTitle("Infinium");
-	require('./modules/applicationMenu.js')();
+	require("./modules/applicationMenu.js")();
 
 	this.window.loadUrl("file://" + __dirname + "/browser.html");
 	this.window.on("closed", function () {
