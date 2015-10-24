@@ -5,6 +5,7 @@
 */
 
 var _ = require("lodash"),
+	cats = require("cat-ascii-faces"),
 	urll = require("url"),
 	http = require("http"),
 	https = require("https"),
@@ -81,7 +82,8 @@ TabView.prototype.initView = function () {
 	}.bind(this));
 
 	this.webview.addEventListener("did-fail-load", function (e) {
-		this.webview.src = "data:text/html," + global.theme.errorpage(e);
+		var errorPage = global.theme.errorpage(_.defaults(e, { face: cats() }));
+		this.webview.src = "data:text/html;charset=utf-8," + errorPage;
 	}.bind(this));
 
 	this.webview.addEventListener("did-finish-load", function () {
