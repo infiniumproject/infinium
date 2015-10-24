@@ -41,8 +41,7 @@ function TabStripController() {
 		var id = _.last(this);
 
 		_.each(this.parent.tabs.tabs, function (tab) {
-			if (tab.id != id) return;
-			lastTab = tab;
+			if (tab.id == id) lastTab = tab;
 		});
 
 		return lastTab;
