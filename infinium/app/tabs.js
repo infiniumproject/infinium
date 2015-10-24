@@ -91,7 +91,7 @@ TabView.prototype.initView = function () {
 	this.webview.addEventListener("did-start-loading", function () {
 		// Small hack to fix preload on pages with no javascript
 		this.webview.executeJavaScript("");
-		
+
 		this.loadState = "loading";
 		this.updateTitle();
 		this.updateUrl();
@@ -116,23 +116,6 @@ TabView.prototype.initView = function () {
 	this.webview.addEventListener("page-favicon-updated", function (e) {
 		this.favicon_url = e.favicons[0];
 		this.updateFavicon();
-	}.bind(this));
-
-	this.webview.addEventListener("did-get-response-details", function (e) {
-		// Stuff for SSL indicator
-		if (this.ssl == false) return;
-
-		var ssl;
-		if (urll.parse(e.newUrl).protocol == "https:") {
-			ssl = true;
-		} else {
-			ssl = false;
-		}
-
-		if (this.ssl != ssl) {
-			this.ssl = ssl;
-			this.updateSsl();
-		}
 	}.bind(this));
 
 	this.webview.addEventListener("did-get-redirect-request", function (e) {
@@ -184,14 +167,11 @@ TabView.prototype.updateUrl = function (url) {
 	this.url = url || this.webview.getUrl();
 	this.url_parts = urll.parse(this.url);
 
+	this.ssl = (this.url_parts.protocol == "https:");
+
 	this.title = null;
 
 	this.parent.emit(Tabs.EVENT_TAB_URL, this);
-}
-
-// Update tab SSL status
-TabView.prototype.updateSsl = function () {
-	this.parent.emit(Tabs.EVENT_TAB_SSL, this);
 }
 
 // Set URL of tab

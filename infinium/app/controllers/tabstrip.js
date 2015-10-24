@@ -77,7 +77,6 @@ TabStripController.prototype.init = function () {
 	this.tabs.on(Tabs.EVENT_TAB_CLOSED, this.onTabClosed.bind(this));
 	this.tabs.on(Tabs.EVENT_TAB_TITLE, this.onTabTitle.bind(this));
 	this.tabs.on(Tabs.EVENT_TAB_URL, this.onTabUrl.bind(this));
-	this.tabs.on(Tabs.EVENT_TAB_SSL, this.onTabSsl.bind(this));
 	this.tabs.on(Tabs.EVENT_TAB_ACTIVE, this.onTabActive.bind(this));
 	this.tabs.on(Tabs.EVENT_TAB_FAVICON, this.onTabFavicon.bind(this));
 
@@ -260,6 +259,12 @@ TabStripController.prototype.onTabUrl = function (tab) {
 		if (this.input_blurred) $(".box input").val(tab.url);
 	}
 
+	if (tab.ssl == true) {
+		this.ssl.css("color", "#6abf40");
+	} else {
+		this.ssl.css("color", "#f7f7f7");
+	}
+
 	try {
 		if (tab.webview) {
 			if (tab.webview.canGoBack()) {
@@ -275,14 +280,6 @@ TabStripController.prototype.onTabUrl = function (tab) {
 			}
 		}
 	} catch (e) {}
-}
-
-TabStripController.prototype.onTabSsl = function (tab) {
-	if (tab.ssl == true) {
-		this.ssl.css("color", "#6abf40");
-	} else {
-		this.ssl.css("color", "#f7f7f7");
-	}
 }
 
 TabStripController.prototype.onTabClosed = function (tab) {
