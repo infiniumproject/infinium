@@ -29,7 +29,7 @@ window.addEventListener("contextmenu", function (e) {
 	e.preventDefault();
 	menu.clickEvent = e;
 	menu.popup(remote.getCurrentWindow());
-}, false);"data:text/html;charset=utf-8," + escape(html_string);
+}, false);
 
 // Custom alert function
 window.alert = function (message) {
