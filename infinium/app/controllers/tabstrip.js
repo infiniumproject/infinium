@@ -232,8 +232,6 @@ TabStripController.prototype.onTabTitle = function (tab) {
 
 	var title = tab.title || "";
 
-	console.log(title)
-
 	if (title) {
 		el.find(".title").text(title);
 	}
