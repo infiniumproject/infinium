@@ -91,8 +91,8 @@ TabStripController.prototype.init = function () {
 
 	$(".box form").submit(function (e) {
 		var url = $(".box input").val();
-		if (url.indexOf("http:") == -1 && url.indexOf("https:") == -1) {
-			url = "http://" + url;
+		if (!url.match(/^\S+:/)) {
+			url = "http://" + url; // TODO: Don't always use http -_-
 		}
 
 		if (this.tabs.active) {

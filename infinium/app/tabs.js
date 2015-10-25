@@ -9,7 +9,7 @@ var _ = require("lodash"),
 	urll = require("url"),
 	http = require("http"),
 	https = require("https"),
-	events = require("events")
+	events = require("events");
 
 var userAgents = require("./modules/useragents");
 
@@ -82,7 +82,7 @@ TabView.prototype.initView = function () {
 	}.bind(this));
 
 	this.webview.addEventListener("did-fail-load", function (e) {
-		var errorPage = global.theme.errorpage(_.defaults(e, { face: cats() }));
+		var errorPage = theme.errorpage(_.defaults(e, { face: cats() }));
 		this.webview.src = "data:text/html;charset=utf-8," + errorPage;
 	}.bind(this));
 
