@@ -4,20 +4,36 @@
 	--------------------------
 */
 
-var ipc = require("ipc");
+var _ = require("lodash"),
+	ipc = require("ipc");
 
 // Launch a new browser with optional launchArgs
-function newBrowser (launchArgs) {
-	new require("./browser")();
+var lastBrowser;
 
+function openUrls (launchArgs, browser) {
 	if (!launchArgs) return;
 
-	if (launchArgs._[0]) {
-		// TODO: Less dangerous
-		ipc.once("loaded", function (evt, arg) {
-			evt.sender.send("loadPage", launchArgs._[0]);
+	if (launchArgs._.length) {
+		_.each(launchArgs._, function (arg) {
+			if (arg.match(/^\S+:/)) {
+				browser.send("loadPage", arg);
+			}
 		});
 	}
+}
+
+function newBrowser (launchArgs) {
+	if (lastBrowser) {
+		openUrls(launchArgs,lastBrowser);
+	} else {
+		new require("./browser")();
+	}
+
+	// TODO: Less dangerous
+	ipc.once("loaded", function (evt, arg) {
+		if (!lastBrowser) openUrls(launchArgs, evt.sender);
+		lastBrowser = evt.sender;
+	});
 }
 
 // Expose newBrowser function to start.js
