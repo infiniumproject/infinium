@@ -6,13 +6,16 @@
 
 var ipc = require("ipc");
 
-// Launch a new browser with optional params
-function newBrowser (params) {
+// Launch a new browser with optional launchArgs
+function newBrowser (launchArgs) {
 	new require("./browser")();
 
-	if (params._[0]) {
+	if (!launchArgs) return;
+
+	if (launchArgs._[0]) {
+		// TODO: Less dangerous
 		ipc.once("loaded", function (evt, arg) {
-			evt.sender.send("loadPage", params._[0]);
+			evt.sender.send("loadPage", launchArgs._[0]);
 		});
 	}
 }
@@ -22,4 +25,6 @@ exports.boot = newBrowser;
 exports.reboot = newBrowser;
 
 // Listen for newBrowser from browser windows
-ipc.on("newBrowser", newBrowser);
+ipc.on("newBrowser", function () {
+	newBrowser();
+});

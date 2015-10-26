@@ -37,7 +37,7 @@ AppMenuController.prototype.hide = function () {
 }
 
 AppMenuController.prototype.onNewWindow = function () {
-	ipc.send("newBrowswer");
+	ipc.send("newBrowser");
 }
 
 AppMenuController.prototype.onToggleBrowserDevtools = function () {
