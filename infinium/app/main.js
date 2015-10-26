@@ -11,11 +11,9 @@ function newBrowser (params) {
 	new require("./browser")();
 
 	if (params._[0]) {
-		var a = _.once(function (evt, arg) {
+		ipc.once("loaded", function (evt, arg) {
 			evt.sender.send("loadPage", params._[0]);
 		});
-
-		ipc.on("loaded", a);
 	}
 }
 

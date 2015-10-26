@@ -9,9 +9,7 @@ booter.on("boot", main.boot);
 booter.on("reboot", main.reboot);
 booter.on("error", function (err) { console.log(err); });
 
-app.on("ready", function() {
-	booter.boot()
-})
+app.on("ready", booter.boot);
 
 app.on("window-all-closed", function () {
 	if (process.platform != "darwin") {
