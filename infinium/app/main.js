@@ -4,8 +4,7 @@
 	--------------------------
 */
 
-var _ = require("lodash"),
-	ipc = require("ipc");
+var ipc = require("ipc");
 
 function newBrowser (params) {
 	new require("./browser")();
