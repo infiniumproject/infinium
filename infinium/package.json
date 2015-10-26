@@ -5,6 +5,7 @@
   "dependencies": {
     "less": "^1.7.5",
     "lodash": "^2.4.1",
-    "cat-ascii-faces": "~2.0.0"
+    "cat-ascii-faces": "~2.0.0",
+    "monogamous": "~1.0.3"
   }
 }
