@@ -4,7 +4,8 @@
 	--------------------------
 */
 
-var remote = require("remote");
+var ipc = require("ipc"),
+	remote = require("remote");
 
 var BrowserWindow = remote.require("browser-window");
 
@@ -36,7 +37,7 @@ AppMenuController.prototype.hide = function () {
 }
 
 AppMenuController.prototype.onNewWindow = function () {
-	var browser = new remote.getGlobal("Infinium").Browser();
+	ipc.send("newBrowswer");
 }
 
 AppMenuController.prototype.onToggleBrowserDevtools = function () {

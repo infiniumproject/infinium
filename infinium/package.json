@@ -1,7 +1,7 @@
 {
   "name": "infinium",
   "version": "0.1.0",
-  "main": "app/main.js",
+  "main": "start.js",
   "dependencies": {
     "less": "^1.7.5",
     "lodash": "^2.4.1",

@@ -5,6 +5,7 @@
 */
 
 var _ = require("lodash"),
+	ipc = require("ipc"),
 	cats = require("cat-ascii-faces"),
 	urll = require("url"),
 	http = require("http"),
@@ -222,6 +223,9 @@ function Tabs () {
 
 	// array of created Tab objects
 	this.tabs = [];
+
+	// Listen for loadPage from parent process
+	ipc.on("loadPage", this.addTab.bind(this));
 }
 
 // this object will have events

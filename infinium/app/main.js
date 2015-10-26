@@ -4,36 +4,22 @@
 	--------------------------
 */
 
-var app = require("app");  // Module to control application life.
+var _ = require("lodash"),
+	ipc = require("ipc");
 
-/*
-	--------------------------
-	Global variables
-	--------------------------
-*/
+function newBrowser (params) {
+	new require("./browser")();
 
-// Import some stuff into the global namespace before doing anything else
-global.Infinium = {
-	Browser: require("./browser")
-};
+	if (params._[0]) {
+		var a = _.once(function (evt, arg) {
+			evt.sender.send("loadPage", params._[0]);
+		});
 
-/*
-	--------------------------
-	Bootstrap
-	This is the first code executed when the browser is launched.
-	--------------------------
-*/
-
-// Quit when all windows are closed.
-app.on("window-all-closed", function() {
-	if (process.platform != "darwin") {
-		app.quit();
+		ipc.on("loaded", a);
 	}
-});
+}
 
-// This method will be called when atom-shell has done everything
-// initialization and ready for creating browser windows.
-app.on("ready", function() {
-	// Create the original browser window.
-	var browser = new Infinium.Browser();
-});
+exports.boot = newBrowser;
+exports.reboot = newBrowser;
+
+ipc.on("newBrowser", newBrowser);

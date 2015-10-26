@@ -1,8 +1,17 @@
 /*
 	--------------------------
+	Imports
+	--------------------------
+*/
+
+var ipc = require("ipc");
+
+/*
+	--------------------------
 	Global variables
 	--------------------------
 */
+
 global.Infinium = {};
 
 function start () {
@@ -16,6 +25,9 @@ function start () {
 
 	// init and render
 	browser.init();
+
+	// Tell host process that browser is done loading
+	ipc.send("loaded");
 }
 
 /* bootstrap / initialization */
