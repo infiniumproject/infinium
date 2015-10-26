@@ -11,27 +11,29 @@ var _ = require("lodash"),
 var lastBrowser;
 
 function openUrls (launchArgs, browser) {
-	if (!launchArgs) return;
-
-	if (launchArgs._.length) {
-		_.each(launchArgs._, function (arg) {
-			if (arg.match(/^\S+:/)) {
-				browser.send("loadPage", arg);
-			}
-		});
-	}
+	_.each(launchArgs._, function (arg) {
+		if (arg.match(/^\S+:/)) {
+			browser.send("loadPage", arg);
+		}
+	});
 }
 
 function newBrowser (launchArgs) {
-	if (lastBrowser) {
-		openUrls(launchArgs,lastBrowser);
-	} else {
-		new require("./browser")();
+	if (launchArgs && launchArgs._.length) {
+		if (lastBrowser) {
+			openUrls(launchArgs, lastBrowser);
+		} else {
+			new require("./browser")();
+
+			// TODO: Less dangerous
+			ipc.once("loaded", function (evt) {
+				openUrls(launchArgs, evt.sender);
+			});
+		}
 	}
 
 	// TODO: Less dangerous
-	ipc.once("loaded", function (evt, arg) {
-		if (!lastBrowser) openUrls(launchArgs, evt.sender);
+	ipc.once("loaded", function (evt) {
 		lastBrowser = evt.sender;
 	});
 }
