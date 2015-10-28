@@ -19,25 +19,17 @@ function openUrls (arr, browser) {
 }
 
 function newBrowser (args) {
-	if (args && args._.length) {
-		if (lastBrowser) {
-			openUrls(args._, lastBrowser);
-		} else {
-			new require("./browser")();
-
-			// TODO: Less dangerous
-			ipc.once("loaded", function (evt) {
-				openUrls(args._, evt.sender);
-			});
-		}
+	if (args && lastBrowser) {
+		openUrls(args._, lastBrowser);
 	} else {
 		new require("./browser")();
+
+		// TODO: Less dangerous
+		ipc.once("loaded", function (evt) {
+			lastBrowser = evt.sender;
+			if (args && args._) openUrls(args._, evt.sender);
+		});
 	}
-	
-	// TODO: Less dangerous
-	ipc.once("loaded", function (evt) {
-		lastBrowser = evt.sender;
-	});
 }
 
 // Expose newBrowser function to start.js
