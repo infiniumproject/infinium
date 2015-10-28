@@ -12,7 +12,6 @@ var lastBrowser;
 
 function openUrls (arr, browser) {
 	_.each(arr, function (arg) {
-		console.log(arg);
 		if (arg.match(/^\S+:/)) {
 			browser.send("loadPage", arg);
 		}
