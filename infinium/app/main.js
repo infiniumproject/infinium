@@ -32,12 +32,12 @@ function newBrowser (args) {
 		}
 	} else {
 		new require("./browser")();
-
-		// TODO: Less dangerous
-		ipc.once("loaded", function (evt) {
-			lastBrowser = evt.sender;
-		});
 	}
+	
+	// TODO: Less dangerous
+	ipc.once("loaded", function (evt) {
+		lastBrowser = evt.sender;
+	});
 }
 
 // Expose newBrowser function to start.js
