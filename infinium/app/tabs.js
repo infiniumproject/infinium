@@ -6,7 +6,6 @@
 
 var _ = require("lodash"),
 	ipc = require("ipc"),
-	cats = require("cat-ascii-faces"),
 	urll = require("url"),
 	http = require("http"),
 	https = require("https"),
@@ -82,10 +81,15 @@ TabView.prototype.initView = function () {
 		console.log("The \"destroyed\" thing happened");
 	}.bind(this));
 
+	/*
+	- IF IT AIN'T BROKE DON'T FIX IT GEN2!!
+
 	this.webview.addEventListener("did-fail-load", function (e) {
-		var errorPage = theme.errorpage(_.defaults(e, { face: cats() }));
+		/*var errorPage = theme.errorpage(_.defaults(e, { face: cats() }));
 		this.webview.src = "data:text/html;charset=utf-8," + errorPage;
+		console.dir(e);
 	}.bind(this));
+	*/
 
 	this.webview.addEventListener("did-finish-load", function () {
 		this.loadState = "done";
