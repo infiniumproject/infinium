@@ -21,6 +21,9 @@ BrowserController.prototype.init = function () {
 
 	// Create the app menu controller
 	this.appMenu = new AppMenuController();
+
+	// Load first tab
+	Infinium.tabs.addTab(Infinium.homepage);
 }
 
 BrowserController.prototype.render = function () {

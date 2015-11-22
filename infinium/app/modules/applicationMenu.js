@@ -1,6 +1,6 @@
 var Menu = require("menu");
 var MenuItem = require("menu-item");
-var app = require("app");
+var appc = require("app");
 
 module.exports = function init (app) {
 	var template = [
@@ -139,7 +139,7 @@ module.exports = function init (app) {
 				{
 					label: "Quit",
 					accelerator: "Command+Q",
-					click: function () { app.quit(); }
+					click: function () { appc.quit(); }
 				},
 			]
 		});

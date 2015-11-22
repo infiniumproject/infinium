@@ -12,7 +12,9 @@ var ipc = require("ipc");
 	--------------------------
 */
 
-global.Infinium = {};
+global.Infinium = {
+	homepage: "http://search.ingo.im/"
+};
 
 function start () {
 	// instatiate the browser objects (tabs, bookmarks, history, downloads etc)

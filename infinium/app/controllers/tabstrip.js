@@ -116,7 +116,7 @@ TabStripController.prototype.init = function () {
 
 // Methods
 TabStripController.prototype.onAddNewTab = function () {
-	Infinium.tabs.addTab("http://localhost");
+	Infinium.tabs.addTab(Infinium.homepage);
 }
 
 TabStripController.prototype.onGoForward = function () {

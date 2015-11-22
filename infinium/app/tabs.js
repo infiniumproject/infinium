@@ -77,8 +77,7 @@ TabView.prototype.initView = function () {
 	}.bind(this));
 
 	this.webview.addEventListener("destroyed", function () {
-		this.loadState = "crashed"; // I think...
-		console.log("The \"destroyed\" thing happened");
+		this.loadState = "destroyed"; // Destroyed = webcontents destroyed
 	}.bind(this));
 
 	/*
