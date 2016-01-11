@@ -13,7 +13,7 @@ var ipc = require("ipc");
 */
 
 global.Infinium = {
-	homepage: "http://dev.ingo.im/"
+	homepage: "http://duckduckgo.com/"
 };
 
 function start () {

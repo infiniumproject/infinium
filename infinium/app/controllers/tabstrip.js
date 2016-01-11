@@ -109,6 +109,8 @@ TabStripController.prototype.init = function () {
 	$(".command.forward").click(this.onGoForward.bind(this));
 	$(".command.back").click(this.onGoBack.bind(this));
 
+	this.wrapper.bind('mousewheel', this.onMouseWheel.bind(this));
+
 	$(".command.menu").click(function () {
 		window.browser.appMenu.show();
 	});
@@ -190,6 +192,24 @@ TabStripController.prototype.onTabAdded = function (tab) {
 	});
 
 	tab.show();
+}
+
+TabStripController.prototype.onMouseWheel = function(evt)
+{
+  var tabs_width = this.tabs.tabs.length * (this.tabWidth + this.tabMargin);
+  var tabs_left = this.tabs_el.position().left;
+
+  var update = tabs_left + evt.originalEvent.wheelDeltaX;
+  if(this.wrapper.width() - update > tabs_width) {
+    update = this.wrapper.width() - tabs_width;
+  }
+  if(update > 0) {
+    update = 0;
+  }
+  this.tabs_el.css({
+    'transition': 'none',
+    'left': (update) + 'px'
+  });
 }
 
 TabStripController.prototype.onTabActive = function (tab) {
